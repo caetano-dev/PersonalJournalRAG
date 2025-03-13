@@ -19,7 +19,7 @@ df["Entry"] = df["Entry"].astype(str)  # Ensure text is string type
 
 # Load FAISS index
 index = faiss.read_index("journal_index.faiss")
-top_k=50
+top_k=30
 # Load embedder
 embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", device="cpu")
 
@@ -41,11 +41,11 @@ def generate_search_terms(question):
     """Generate search terms using the LLM"""
     prompt = f"""Generate 10 specific search terms or phrases in English and French to help find relevant information in a journal about: "{question}"
 
-Format your response as a simple comma-separated list of search terms.
+Format your response as a simple comma-separated list of search terms. Your response should contain only the search terms without any additional text or explanations.
 Focus on key events, dates, names, or specific details that might be mentioned in a journal.
 
 For example, if the question is "What did I do on my birthday?", you might respond with:
-birthday celebration, anniversaire, birthday party, cadeau anniversaire, fête, bithday, gifts, cake, gateau, ...
+"birthday, anniversaire, party, cadeau, fête, gifts, cake, gateau, friends..."
 
 Provide only the search terms without any additional text or explanations.
 """

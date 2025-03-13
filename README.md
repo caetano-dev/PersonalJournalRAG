@@ -43,3 +43,15 @@ First, you need to have ollama running on localhost:11434. The default model is 
 ```
 python3 search_journal.py "your question here"
 ```
+
+## Example:
+
+```
+python3 search_journal.py "What concert did I buy tickets for?"
+```
+The model will generate search terms, look for them in the text and come up with a final answer:
+
+```
+Final Answer:
+Based on the provided journal entries, the name of the band you bought tickets for is Twenty One Pilots. The entries specifically mention that "There is a band called Balu Brigada pra will open the Twenty One Pilots concert" (Jan 22, 2025, Time: 16:57) and that "Nous avons acheté les tickets pour l'événement de demain. On y va à 14:30 et Gabe va avec nous" (Jan 20, 2024, Time: 20:36), which implies that you bought tickets for a Twenty One Pilots concert.
+```
