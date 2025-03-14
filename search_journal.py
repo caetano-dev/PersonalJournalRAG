@@ -19,15 +19,15 @@ df["Entry"] = df["Entry"].astype(str)  # Ensure text is string type
 
 # Load FAISS index
 index = faiss.read_index("journal_index.faiss")
-top_k=30
+top_k=35
 # Load embedder
 embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", device="cpu")
 
-def get_llm_response(prompt, stream=False):
+def get_llm_response(prompt, stream=False, model="llama3:latest"):
     """Helper function to get response from Ollama"""
     response = requests.post('http://localhost:11434/api/generate',
                            json={
-                               "model": "llama3:latest",
+                               "model": model,
                                "prompt": prompt,
                                "stream": stream
                            })
@@ -39,19 +39,21 @@ def get_llm_response(prompt, stream=False):
 
 def generate_search_terms(question):
     """Generate search terms using the LLM"""
-    prompt = f"""Generate 10 specific search terms or phrases in English and French to help find relevant information in a journal about: "{question}"
+    prompt = f"""Generate 20 specific search terms or phrases in English and French to help find relevant information in a journal about: "{question}"
 
 Format your response as a simple comma-separated list of search terms. Your response should contain only the search terms without any additional text or explanations.
 Focus on key events, dates, names, or specific details that might be mentioned in a journal.
 
-For example, if the question is "What did I do on my birthday?", you might respond with:
+For example, if the question is "What did I do on my birthday?", your response should look like:
 "birthday, anniversaire, party, cadeau, fête, gifts, cake, gateau, friends..."
 
 Provide only the search terms without any additional text or explanations.
 """
 
-    response = get_llm_response(prompt)
+    response = get_llm_response(prompt, model="llama3:latest")
     search_terms = [term.strip() for term in response.split(',')]
+    if "search" in search_terms[0]:
+        search_terms.pop(0)
     return search_terms
 
 def search_journal(query):
@@ -106,12 +108,12 @@ def generate_answer(question):
 Context from journal:
 {context}
 
-Please provide a clear and specific answer based only on the information found in these journal entries.
+Please provide a clear and specific answer based only on the information found in these journal entries. It is your task to analyze the context and provide a relevant answer.
 If the information isn't found in the entries, please say so.
 
 Answer:"""
 
-    final_answer = get_llm_response(prompt)
+    final_answer = get_llm_response(prompt, model="deepseek-r1:8b")
     return final_answer
 
 # Example usage
